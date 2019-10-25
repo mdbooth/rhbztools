@@ -1,0 +1,165 @@
+import ddt
+import fixtures
+import json
+import requests_mock
+from urllib.parse import urlencode
+import testtools
+from unittest import mock
+
+from bztools import bugzilla
+
+@ddt.ddt
+class TestCreds(testtools.TestCase):
+    def setUp(self):
+        super(TestCreds, self).setUp()
+
+        f = fixtures.MockPatch('bztools.bugzilla.open')
+        self.mock_open = self.useFixture(f).mock
+
+        # This testcase should never try to hit real bugzilla
+        self.useFixture(fixtures.MockPatch('bztools.bugzilla.requests'))
+
+    def test_no_auth_file(self):
+        self.mock_open.side_effect = FileNotFoundError
+        self.assertRaises(bugzilla._AuthRequired, bugzilla.Session)
+
+    @ddt.data(
+        # Invalid json
+        '{',
+        # Missing api key
+        '{"login": "user@example.com"}',
+        # Unknown field
+        '{"login": "user@example.com", "api_key": "12345", "foo": "bar"}',
+    )
+    def test_auth_invalid_creds(self, auth_data):
+        self.mock_open.side_effect = mock.mock_open(read_data=auth_data)
+        self.assertRaises(bugzilla._AuthError, bugzilla.Session)
+
+
+class _CredentialFileFixture(fixtures.Fixture):
+    def setUp(self):
+        super(_CredentialFileFixture, self).setUp()
+
+        self.fake_creds = {'login': 'user@example.com',
+                           'api_key': 'fake_api_key'}
+
+        mock_open = mock.mock_open(read_data=json.dumps(self.fake_creds))
+        f = fixtures.MonkeyPatch('bztools.bugzilla.open', mock_open)
+        self.useFixture(f)
+
+
+@requests_mock.Mocker()
+class TestSessionValidation(testtools.TestCase):
+    def setUp(self):
+        super(TestSessionValidation, self).setUp()
+        f = self.useFixture(_CredentialFileFixture())
+        self.fake_creds = f.fake_creds
+
+    def test_validate_ok(self, req):
+        response = {'result': True}
+        req.get('https://bugzilla.redhat.com/rest/valid_login?' +
+                urlencode(self.fake_creds), text=json.dumps(response))
+
+        bugzilla.Session()
+
+    def test_validate_invalid_login(self, req):
+        # Returned for a correct api_key and incorrect login
+        response = {'result': False}
+        req.get('https://bugzilla.redhat.com/rest/valid_login?' +
+                urlencode(self.fake_creds), text=json.dumps(response))
+
+        self.assertRaises(bugzilla._AuthRequired, bugzilla.Session)
+
+    def test_validate_invalid_api_key(self, req):
+        # Returned for an incorrect_api_key
+        response = {
+            'documentation': 'https://bugzilla.redhat.com/docs/en/html/api/index.html',
+            'error': True,
+            'code': 306,
+            'message': ('The API key you specified is invalid. Please check '
+                        'that you typed it correctly.')
+        }
+        req.get('https://bugzilla.redhat.com/rest/valid_login?' +
+                urlencode(self.fake_creds), text=json.dumps(response))
+
+        ex = self.assertRaises(bugzilla._AuthRequired, bugzilla.Session)
+        self.assertEqual(response['message'], ex.args[0])
+
+
+class TestSession(testtools.TestCase):
+    def setUp(self):
+        super(TestSession, self).setUp()
+
+        f = self.useFixture(_CredentialFileFixture())
+        self.fake_creds = f.fake_creds
+
+        self.req = requests_mock.Mocker()
+        self.addCleanup(self.req.stop)
+        m = self.req.start()
+
+        valid_login_response = {'result': True}
+        self.req.get('https://bugzilla.redhat.com/rest/valid_login?' +
+                     urlencode(self.fake_creds),
+                     text=json.dumps(valid_login_response))
+
+        self.fake_response = json.dumps('fake_response')
+
+    def _find_req_for_path(self, path):
+        return next((req for req in self.req.request_history
+                     if req.path == path), None)
+
+    def _assert_query_match(self, query, qs):
+        self.assertListEqual(sorted(query.keys()), sorted(qs.keys()))
+
+        for key, value in query.items():
+            if not isinstance(value, list):
+                value = [value]
+
+            self.assertListEqual(list(value), list(qs[key]))
+
+    def test_bugs_single(self):
+        query = dict(id='12345', **self.fake_creds)
+        expected_url = ('https://bugzilla.redhat.com/rest/bug?' +
+                        urlencode(query))
+        self.req.get(expected_url, text=self.fake_response)
+
+        session = bugzilla.Session()
+        r = session.get_bug(12345)
+
+        req = self._find_req_for_path('/rest/bug')
+        self.assertIsNotNone(req)
+        self._assert_query_match(query, req.qs)
+        self.assertEqual(r, 'fake_response')
+
+    def test_bugs_multiple(self):
+        query = dict(id='1,2,3,4,5', **self.fake_creds)
+        expected_url = ('https://bugzilla.redhat.com/rest/bug?' +
+                        urlencode(query))
+        self.req.get(expected_url, text=self.fake_response)
+
+        session = bugzilla.Session()
+        r = session.get_bugs([1, 2, 3, 4, 5])
+
+        req = self._find_req_for_path('/rest/bug')
+        self.assertIsNotNone(req)
+        self._assert_query_match(query, req.qs)
+        self.assertEqual(r, 'fake_response')
+
+    def test_bugs_include_fields(self):
+        query = dict(id='1,2,3,4,5',
+                     include_fields='cf_internal_whiteboard,id',
+                     **self.fake_creds)
+        expected_url = ('https://bugzilla.redhat.com/rest/bug?' +
+                        urlencode(query))
+        self.req.get(expected_url, text=self.fake_response)
+
+        session = bugzilla.Session()
+        r = session.get_bugs([1, 2, 3, 4, 5], fields=['cf_internal_whiteboard'])
+
+        bug_req = next((req for req in self.req.request_history
+                        if req.path == '/rest/bug'))
+        self._assert_query_match(query, bug_req.qs)
+        self.assertEqual(r, 'fake_response')
+
+    def test_update_bug_single(self):
+        pass
