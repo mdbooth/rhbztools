@@ -162,4 +162,28 @@ class TestSession(testtools.TestCase):
         self.assertEqual(r, 'fake_response')
 
     def test_update_bug_single(self):
-        pass
+        self.req.put('https://bugzilla.redhat.com/rest/bug',
+                     text='"fake_response"')
+        session = bugzilla.Session()
+        r = session.update_bug('12345', {'cf_internal_whiteboard': 'test'})
+
+        bug_req = next((req for req in self.req.request_history
+                        if req.path == '/rest/bug'))
+        self.assertDictEqual(
+                {'cf_internal_whiteboard': 'test', 'ids': [12345]},
+                bug_req.json())
+        self.assertEqual(r, 'fake_response')
+
+    def test_update_bug_multiple(self):
+        self.req.put('https://bugzilla.redhat.com/rest/bug',
+                     text='"fake_response"')
+        session = bugzilla.Session()
+        r = session.update_bugs([1, 2, 3, 4, 5],
+                                {'cf_internal_whiteboard': 'test'})
+
+        bug_req = next((req for req in self.req.request_history
+                        if req.path == '/rest/bug'))
+        self.assertDictEqual(
+                {'cf_internal_whiteboard': 'test', 'ids': [1, 2, 3, 4, 5]},
+                bug_req.json())
+        self.assertEqual(r, 'fake_response')

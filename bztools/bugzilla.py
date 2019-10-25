@@ -36,15 +36,15 @@ class Session:
                    '{path}'.format(path=auth_file))
             raise _AuthError(msg)
 
-    def _method(self, func, path, params=None, data=None):
+    def _method(self, func, path, params=None, body=None):
         if params is None:
             params = {}
         params.update(dataclasses.asdict(self.creds))
 
         uri = 'https://bugzilla.redhat.com/rest/' + '/'.join(path)
         kwargs = {'params': params}
-        if data is not None:
-            kwargs['data'] = data
+        if body is not None:
+            kwargs['json'] = body
 
         return func(uri, **kwargs).json()
 
@@ -52,9 +52,9 @@ class Session:
         return self._method(requests.get, path,
                             params=params)
 
-    def _put(self, path, data, params=None):
+    def _put(self, path, body, params=None):
         return self._method(requests.put, path,
-                            params=params, data=data)
+                            params=params, body=body)
 
     def _validate_creds(self):
         resp = self._get(['valid_login'])
@@ -87,7 +87,7 @@ class Session:
         return self.update_bugs([bzid], values)
 
     def update_bugs(self, bzids, values):
-        body = {'ids': bzids}
+        body = {'ids': [int(bzid) for bzid in bzids]}
         body.update(values)
 
-        return self._put(['bug'], data=body)
+        return self._put(['bug'], body=body)
