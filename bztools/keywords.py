@@ -55,42 +55,46 @@ class Keywords:
 
         return canon_set
 
-    def update_string(self, orig, add=None, remove=None):
-        updated = False
-        output = []
-
+    def updater(self, add=None, remove=None):
         add_set = set() if add is None else self._to_canon_set(add)
         remove_set = set() if remove is None else self._to_canon_set(remove)
 
-        for word in orig.split():
-            canon_word = self._to_canon(word)
+        def _updater(orig):
+            updated = False
+            output = []
 
-            # Ignore unrecognised words
-            if canon_word is None:
-                output.append(word)
-                continue
+            for word in orig.split():
+                canon_word = self._to_canon(word)
 
-            if canon_word in remove_set:
-                updated = True
-                continue
+                # Ignore unrecognised words
+                if canon_word is None:
+                    output.append(word)
+                    continue
 
-            if canon_word in add_set:
-                add_set.remove(canon_word)
+                if canon_word in remove_set:
+                    updated = True
+                    continue
+
+                if canon_word in add_set:
+                    add_set.remove(canon_word)
+                    output.append(canon_word)
+                    updated = updated or (word != canon_word)
+                    continue
+
                 output.append(canon_word)
                 updated = updated or (word != canon_word)
-                continue
 
-            output.append(canon_word)
-            updated = updated or (word != canon_word)
+            for word in add_set:
+                updated = True
+                output.append(word)
 
-        for word in add_set:
-            updated = True
-            output.append(word)
+            if not updated:
+                return None
 
-        if not updated:
-            return None
+            return ' '.join(output)
 
-        return ' '.join(output)
+        return _updater
 
-def main():
-    print("Hello, World!")
+    def update_string(self, orig, add=None, remove=None):
+        updater = self.updater(add, remove)
+        return updater(orig)
