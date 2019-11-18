@@ -1,5 +1,5 @@
 *.pyc
 .*.swp
 __pycache__/
-/bztools.egg-info
+/rhbztools.egg-info
 /.eggs

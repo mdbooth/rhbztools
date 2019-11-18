@@ -2,7 +2,7 @@ import contextlib
 import unittest
 import unittest.mock
 
-from bztools import keywords
+from rhbztools import keywords
 
 class TestLineReader(unittest.TestCase):
     FIXTURE = [
@@ -19,7 +19,7 @@ class TestLineReader(unittest.TestCase):
         '',
     ]
 
-    @unittest.mock.patch('bztools.keywords.open')
+    @unittest.mock.patch('rhbztools.keywords.open')
     def test_lines(self, mock_open):
         mock_open.side_effect = \
                 unittest.mock.mock_open(read_data='\n'.join(self.FIXTURE))

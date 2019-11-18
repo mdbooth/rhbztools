@@ -2,8 +2,8 @@ import argparse
 from collections import defaultdict
 import logging
 
-from bztools.bugzilla import Session, AuthError, AuthRequired
-from bztools.keywords import Keywords, LineReader, InvalidKeyword
+from rhbztools.bugzilla import Session, AuthError, AuthRequired
+from rhbztools.keywords import Keywords, LineReader, InvalidKeyword
 
 LOG = logging.getLogger(__name__)
 

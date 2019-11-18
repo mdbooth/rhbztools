@@ -1,9 +1,9 @@
 from setuptools import setup
 
 setup(
-    name = 'bztools',
+    name = 'rhbztools',
     version = '0.1',
-    packages = ['bztools'],
+    packages = ['rhbztools'],
     python_requires = '>=3.7',
     install_requires = [
         'appdirs',
@@ -11,9 +11,9 @@ setup(
     ],
     entry_points = {
         'console_scripts': [
-            'bzdevelwb = bztools.bzdevelwb:main',
+            'bzdevelwb = rhbztools.bzdevelwb:main',
         ]
     },
-    test_suite = 'bztools.tests.all_tests',
+    test_suite = 'rhbztools.tests.all_tests',
     tests_require = ['testtools', 'requests-mock', 'ddt'],
 )

@@ -6,18 +6,18 @@ from urllib.parse import urlencode
 import testtools
 from unittest import mock
 
-from bztools import bugzilla
+from rhbztools import bugzilla
 
 @ddt.ddt
 class TestCreds(testtools.TestCase):
     def setUp(self):
         super(TestCreds, self).setUp()
 
-        f = fixtures.MockPatch('bztools.bugzilla.open')
+        f = fixtures.MockPatch('rhbztools.bugzilla.open')
         self.mock_open = self.useFixture(f).mock
 
         # This testcase should never try to hit real bugzilla
-        self.useFixture(fixtures.MockPatch('bztools.bugzilla.requests'))
+        self.useFixture(fixtures.MockPatch('rhbztools.bugzilla.requests'))
 
     def test_no_auth_file(self):
         self.mock_open.side_effect = FileNotFoundError
@@ -44,7 +44,7 @@ class _CredentialFileFixture(fixtures.Fixture):
                            'api_key': 'fake_api_key'}
 
         mock_open = mock.mock_open(read_data=json.dumps(self.fake_creds))
-        f = fixtures.MonkeyPatch('bztools.bugzilla.open', mock_open)
+        f = fixtures.MonkeyPatch('rhbztools.bugzilla.open', mock_open)
         self.useFixture(f)
 
 
