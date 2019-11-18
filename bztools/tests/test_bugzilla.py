@@ -21,7 +21,7 @@ class TestCreds(testtools.TestCase):
 
     def test_no_auth_file(self):
         self.mock_open.side_effect = FileNotFoundError
-        self.assertRaises(bugzilla._AuthRequired, bugzilla.Session)
+        self.assertRaises(bugzilla.AuthRequired, bugzilla.Session)
 
     @ddt.data(
         # Invalid json
@@ -33,7 +33,7 @@ class TestCreds(testtools.TestCase):
     )
     def test_auth_invalid_creds(self, auth_data):
         self.mock_open.side_effect = mock.mock_open(read_data=auth_data)
-        self.assertRaises(bugzilla._AuthError, bugzilla.Session)
+        self.assertRaises(bugzilla.AuthError, bugzilla.Session)
 
 
 class _CredentialFileFixture(fixtures.Fixture):
@@ -68,7 +68,7 @@ class TestSessionValidation(testtools.TestCase):
         req.get('https://bugzilla.redhat.com/rest/valid_login?' +
                 urlencode(self.fake_creds), text=json.dumps(response))
 
-        self.assertRaises(bugzilla._AuthRequired, bugzilla.Session)
+        self.assertRaises(bugzilla.AuthRequired, bugzilla.Session)
 
     def test_validate_invalid_api_key(self, req):
         # Returned for an incorrect_api_key
@@ -82,7 +82,7 @@ class TestSessionValidation(testtools.TestCase):
         req.get('https://bugzilla.redhat.com/rest/valid_login?' +
                 urlencode(self.fake_creds), text=json.dumps(response))
 
-        ex = self.assertRaises(bugzilla._AuthRequired, bugzilla.Session)
+        ex = self.assertRaises(bugzilla.AuthRequired, bugzilla.Session)
         self.assertEqual(response['message'], ex.args[0])
 
 

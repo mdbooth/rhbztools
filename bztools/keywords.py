@@ -1,11 +1,11 @@
 import re
 
-class _LineReader:
+class LineReader:
     # Lines to ignore
     IGNORE_RE = [re.compile(r) for r in (r'^#', r'^\s*$')]
 
     def __init__(self, path):
-        super(_LineReader, self).__init__()
+        super(LineReader, self).__init__()
         self.path = path
 
     def lines(self):

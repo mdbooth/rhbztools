@@ -4,10 +4,10 @@ import json
 import os.path
 import requests
 
-class _AuthRequired(Exception):
+class AuthRequired(Exception):
     pass
 
-class _AuthError(Exception):
+class AuthError(Exception):
     pass
 
 @dataclasses.dataclass(frozen=True)
@@ -26,15 +26,16 @@ class Session:
                 authdata = json.load(f)
             return _Credentials(**authdata)
         except FileNotFoundError:
-            raise _AuthRequired('Not logged in')
+            raise AuthRequired('Not logged in: {file} does not exist'
+                                .format(file=auth_file))
         except json.decoder.JSONDecodeError as ex:
             msg = 'Error in authentication file {path}:\n{msg}'.format(
                     path=auth_file, msg=ex.msg)
-            raise _AuthError(msg)
+            raise AuthError(msg)
         except TypeError:
             msg = ('Missing or extraneous data in authentication file '
                    '{path}'.format(path=auth_file))
-            raise _AuthError(msg)
+            raise AuthError(msg)
 
     def _method(self, func, path, params=None, body=None):
         if params is None:
@@ -60,10 +61,10 @@ class Session:
         resp = self._get(['valid_login'])
 
         if resp.get('error'):
-            raise _AuthRequired(resp.get('message'))
+            raise AuthRequired(resp.get('message'))
 
         if not resp.get('result'):
-            raise _AuthRequired('Invalid login details')
+            raise AuthRequired('Invalid login details')
 
     def __init__(self):
         auth_file = self._auth_file()

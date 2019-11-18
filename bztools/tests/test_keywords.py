@@ -24,7 +24,7 @@ class TestLineReader(unittest.TestCase):
         mock_open.side_effect = \
                 unittest.mock.mock_open(read_data='\n'.join(self.FIXTURE))
 
-        reader = keywords._LineReader('foo')
+        reader = keywords.LineReader('foo')
         lines = list(reader.lines())
         self.assertListEqual(lines, ['Line 1', 'Line 2', 'Line 3'])
         mock_open.assert_called_once_with('foo', 'r')
