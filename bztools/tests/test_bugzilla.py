@@ -102,8 +102,6 @@ class TestSession(testtools.TestCase):
                      urlencode(self.fake_creds),
                      text=json.dumps(valid_login_response))
 
-        self.fake_response = json.dumps('fake_response')
-
     def _find_req_for_path(self, path):
         return next((req for req in self.req.request_history
                      if req.path == path), None)
@@ -121,7 +119,7 @@ class TestSession(testtools.TestCase):
         query = dict(id='12345', **self.fake_creds)
         expected_url = ('https://bugzilla.redhat.com/rest/bug?' +
                         urlencode(query))
-        self.req.get(expected_url, text=self.fake_response)
+        self.req.get(expected_url, text=json.dumps({'bugs': 'fake_response'}))
 
         session = bugzilla.Session()
         r = session.get_bug(12345)
@@ -135,7 +133,7 @@ class TestSession(testtools.TestCase):
         query = dict(id='1,2,3,4,5', **self.fake_creds)
         expected_url = ('https://bugzilla.redhat.com/rest/bug?' +
                         urlencode(query))
-        self.req.get(expected_url, text=self.fake_response)
+        self.req.get(expected_url, text=json.dumps({'bugs': 'fake_response'}))
 
         session = bugzilla.Session()
         r = session.get_bugs([1, 2, 3, 4, 5])
@@ -151,7 +149,7 @@ class TestSession(testtools.TestCase):
                      **self.fake_creds)
         expected_url = ('https://bugzilla.redhat.com/rest/bug?' +
                         urlencode(query))
-        self.req.get(expected_url, text=self.fake_response)
+        self.req.get(expected_url, text=json.dumps({'bugs': 'fake_response'}))
 
         session = bugzilla.Session()
         r = session.get_bugs([1, 2, 3, 4, 5], fields=['cf_internal_whiteboard'])
@@ -161,9 +159,11 @@ class TestSession(testtools.TestCase):
         self._assert_query_match(query, bug_req.qs)
         self.assertEqual(r, 'fake_response')
 
-    def test_update_bug_single(self):
+    # NOTE(mdbooth): This tests the multiple bugs version of PUT, which RHBZ
+    # doesn't seem to support
+    def _test_update_bug_single(self):
         self.req.put('https://bugzilla.redhat.com/rest/bug',
-                     text='"fake_response"')
+                     text=json.dumps('fake_response'))
         session = bugzilla.Session()
         r = session.update_bug('12345', {'cf_internal_whiteboard': 'test'})
 
@@ -174,9 +174,11 @@ class TestSession(testtools.TestCase):
                 bug_req.json())
         self.assertEqual(r, 'fake_response')
 
-    def test_update_bug_multiple(self):
+    # NOTE(mdbooth): This tests the multiple bugs version of PUT, which RHBZ
+    # doesn't seem to support
+    def _test_update_bug_multiple(self):
         self.req.put('https://bugzilla.redhat.com/rest/bug',
-                     text='"fake_response"')
+                     text=json.dumps('fake_response'))
         session = bugzilla.Session()
         r = session.update_bugs([1, 2, 3, 4, 5],
                                 {'cf_internal_whiteboard': 'test'})
@@ -185,5 +187,18 @@ class TestSession(testtools.TestCase):
                         if req.path == '/rest/bug'))
         self.assertDictEqual(
                 {'cf_internal_whiteboard': 'test', 'ids': [1, 2, 3, 4, 5]},
+                bug_req.json())
+        self.assertEqual(r, 'fake_response')
+
+    def test_update_bug_single(self):
+        self.req.put('https://bugzilla.redhat.com/rest/bug/12345',
+                        text=json.dumps('fake_response'))
+        session = bugzilla.Session()
+        r = session.update_bug('12345', {'cf_internal_whiteboard': 'test'})
+
+        bug_req = next((req for req in self.req.request_history
+                        if req.path == '/rest/bug/12345'))
+        self.assertDictEqual(
+                {'cf_internal_whiteboard': 'test'},
                 bug_req.json())
         self.assertEqual(r, 'fake_response')

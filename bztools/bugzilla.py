@@ -79,16 +79,23 @@ class Session:
         params = {'id': ','.join((str(bzid) for bzid in bzids))}
         params.update(dataclasses.asdict(self.creds))
         if fields is not None:
-            fields.append('id')
-            params['include_fields'] = ','.join(fields)
+            params['include_fields'] = ','.join(fields + ['id'])
 
-        return self._get(['bug'], params)
+        return self._get(['bug'], params)['bugs']
 
     def update_bug(self, bzid, values):
-        return self.update_bugs([bzid], values)
+        return self._put(['bug', str(bzid)], body=values)
 
     def update_bugs(self, bzids, values):
-        body = {'ids': [int(bzid) for bzid in bzids]}
-        body.update(values)
+        # NOTE(mdbooth): Upstream Buzilla documentation[1] suggests we can do
+        # this in a single PUT call for multiple bugs. This would be more
+        # efficient, but it fails with:
+        #   A REST API resource was not found for 'PUT /bug'
+        # It's possible RH Bugzilla is too old.
+        # [1] https://bugzilla.readthedocs.io/en/latest/api/core/v1/bug.html#update-bug
+        #body = {'ids': [int(bzid) for bzid in bzids]}
+        #body.update(values)
+        #return self._put(['bug'], body=body)
 
-        return self._put(['bug'], body=body)
+        for bzid in bzids:
+            self.update_bug(bzid, values)
