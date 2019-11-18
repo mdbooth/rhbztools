@@ -1,8 +1,11 @@
 import appdirs
 import dataclasses
 import json
+import logging
 import os.path
 import requests
+
+LOG = logging.getLogger(__name__)
 
 class AuthRequired(Exception):
     pass
@@ -47,7 +50,9 @@ class Session:
         if body is not None:
             kwargs['json'] = body
 
-        return func(uri, **kwargs).json()
+        resp = func(uri, **kwargs).json()
+        LOG.debug('Response: {resp}'.format(resp=resp))
+        return resp
 
     def _get(self, path, params=None):
         return self._method(requests.get, path,
