@@ -219,3 +219,11 @@ class TestBZQL(testtools.TestCase):
         for failval in ("foo", '0', '12.34', '["foo"]'):
             self.assertRaises(tatsu.exceptions.ParseError, self.parser,
                               query.format(op=op, value=failval))
+
+    def test_compound_fieldname(self):
+        query = 'flagtypes.name substring "rhos-17.0"'
+        expected = {'f0': 'flagtypes.name', 'o0': 'substring',
+                    'v0': 'rhos-17.0'}
+
+        params = self.parser(query)
+        self.assertEqual(expected, params)
