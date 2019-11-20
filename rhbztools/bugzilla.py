@@ -5,12 +5,17 @@ import logging
 import os.path
 import requests
 
+from rhbztools import bzql
+
 LOG = logging.getLogger(__name__)
 
 class AuthRequired(Exception):
     pass
 
 class AuthError(Exception):
+    pass
+
+class BugzillaError(Exception):
     pass
 
 @dataclasses.dataclass(frozen=True)
@@ -80,13 +85,33 @@ class Session:
     def get_bug(self, bzid, fields=None):
         return self.get_bugs([bzid], fields=fields)
 
+    @staticmethod
+    def _buglist(response):
+        if response.get('error'):
+            raise BugzillaError(response.get('message'))
+
+        return response.get('bugs')
+
     def get_bugs(self, bzids, fields=None):
         params = {'id': ','.join((str(bzid) for bzid in bzids))}
         params.update(dataclasses.asdict(self.creds))
         if fields is not None:
             params['include_fields'] = ','.join(fields + ['id'])
 
-        return self._get(['bug'], params)['bugs']
+        response = self._get(['bug'], params)['bugs']
+        return self._buglist(response)
+
+    def query(self, query, fields=None):
+        parser = bzql.parser()
+        params = parser(query)
+
+        if fields is not None:
+            if 'id' not in fields:
+                fields = ['id'] + fields
+            params['include_fields'] = ','.join(fields)
+
+        response = self._get(['bug'], params)
+        return self._buglist(response)
 
     def update_bug(self, bzid, values):
         return self._put(['bug', str(bzid)], body=values)

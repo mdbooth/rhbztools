@@ -13,8 +13,10 @@ setup(
     entry_points = {
         'console_scripts': [
             'bzdevelwb = rhbztools.bzdevelwb:main',
+            'bzquery = rhbztools.bzquery:main',
         ]
     },
+    include_package_data=True,
     test_suite = 'rhbztools.tests.all_tests',
     tests_require = ['testtools', 'requests-mock', 'ddt'],
 )
