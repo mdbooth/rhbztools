@@ -8,6 +8,7 @@ setup(
     install_requires = [
         'appdirs',
         'requests',
+        'tatsu',
     ],
     entry_points = {
         'console_scripts': [

@@ -1,0 +1,240 @@
+@@grammar::RHBZQL
+
+start
+    =
+    orgroup $
+    ;
+
+# OR has lower precedence than AND
+# An OrGroup is a list of AndGroups joined by OR
+# OrGroup always exists in the AST, even if there is no OR. Therefore we elide
+# an OrGroup with a single member during generation.
+orgroup::OrGroup
+    =
+    (or).{ andgroup }+
+    ;
+
+# AndGroup is a list of expressions or subgroups joined by AND
+# AndGroup always exists in the AST.
+andgroup::AndGroup
+    =
+    #(and).{ ( opexpression | subgroup ) }+
+    (and).{ negatable }+
+    ;
+
+and
+    =
+    | /(?i)and/
+    | '&'
+    ;
+
+or
+    =
+    | /(?i)or/
+    | '|'
+    ;
+
+not
+    =
+    | /(?i)not/
+    | '!'
+    ;
+
+negatable::Negatable
+    =
+    [ negate:not ] negatable:( opexpression | subgroup )
+    ;
+
+opexpression::OpExpression
+    =
+    field:field (
+        | op:scalarop ~ value:scalar
+        | op:listofscalarop ~ value:listofscalar
+        | op:listofintop ~ value:listofint
+        | op:regexpop ~ value:string
+        | op:numberop ~ value:number
+        | op:timeop ~ value:string
+        | op:unaryop
+    )
+    ;
+
+subgroup::SubGroup
+    =
+    '(' ~ @:orgroup ')'
+    ;
+
+scalarop
+    =
+    | equals
+    | notequals
+    | substring
+    | casesubstring
+    | notsubstring
+    | changedfrom
+    | changedto
+    | changedby
+    | matches
+    | notmatches
+    ;
+
+listofscalarop
+    =
+    | anyexact
+    | anywordssubstr
+    | allwordssubstr
+    | nowordssubstr
+    | anywords
+    | allwords
+    | nowords
+    ;
+
+listofintop = listofbugs ;
+
+regexpop
+    =
+    | regexp
+    | notregexp
+    ;
+
+numberop
+    =
+    | lessthaneq
+    | lessthan
+    | greaterthaneq
+    | greaterthan
+    ;
+
+timeop
+    =
+    | changedbefore
+    | changedafter
+    ;
+
+unaryop
+    =
+    | isempty
+    | isnotempty
+    ;
+
+equals
+    =
+    | /(?i)equals/
+    | '=='
+    ;
+
+notequals
+    =
+    | /(?i)notequals/
+    | '!='
+    ;
+
+anyexact
+    =
+    | /(?i)anyexact/
+    | /(?i)in/
+    ;
+
+regexp
+    =
+    | /(?i)regexp/
+    | '~'
+    ;
+
+notregexp
+    =
+    | /(?i)notregexp/
+    | '!~'
+    ;
+
+lessthan
+    =
+    | /(?i)lessthan/
+    | '<'
+    ;
+
+lessthaneq
+    =
+    | /(?i)lessthaneq/
+    | '<='
+    ;
+
+greaterthan
+    =
+    | /(?i)greaterthan/
+    | '>'
+    ;
+
+greaterthaneq
+    =
+    | /(?i)greaterthaneq/
+    | '>='
+    ;
+
+substring = /(?i)substring/ ;
+casesubstring = /(?i)casesubstring/ ;
+notsubstring = /(?i)notsubstring/ ;
+changedfrom = /(?i)changedfrom/ ;
+changedto = /(?i)changedto/ ;
+changedby = /(?i)changedby/ ;
+matches = /(?i)matches/ ;
+notmatches = /(?i)notmatches/ ;
+anywordssubstr = /(?i)anywordssubstr/ ;
+allwordssubstr = /(?i)allwordssubstr/ ;
+nowordssubstr = /(?i)nowordssubstr/ ;
+anywords = /(?i)anywords/ ;
+allwords = /(?i)allwords/ ;
+nowords = /(?i)nowords/ ;
+listofbugs = /(?i)listofbugs/ ;
+changedbefore = /(?i)changedbefore/ ;
+changedafter = /(?i)changedafter/ ;
+isempty = /(?i)isempty/ ;
+isnotempty = /(?i)isnotempty/ ;
+
+# TODO: Handle escapes
+string::String
+    =
+    '"' ~ scalar:/[^"]+/ '"'
+    ;
+
+float::Float
+    =
+    scalar:/\d+\.\d+/
+    ;
+
+int::Int
+    =
+    scalar:/\d+/
+    ;
+
+number
+    =
+    | float
+    | int
+    ;
+
+scalar
+    =
+    | string
+    | number
+    ;
+
+listofscalar::List
+    =
+    '[' ~ list:','.{ scalar }+ ']'
+    ;
+
+listofint::List
+    =
+    '[' ~ list:','.{ int }+ ']'
+    ;
+
+value
+    =
+    | scalar
+    | listofscalar
+    ;
+
+field
+    =
+    /[a-zA-Z_]+/
+    ;
