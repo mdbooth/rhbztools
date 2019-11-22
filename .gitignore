@@ -3,3 +3,4 @@
 __pycache__/
 /rhbztools.egg-info
 /.eggs
+/build

@@ -1,3 +1,2 @@
-README.rst
-COPYING
-rhbztools/bzql.ebnf
+include README.rst
+include rhbztools/bzql.ebnf
