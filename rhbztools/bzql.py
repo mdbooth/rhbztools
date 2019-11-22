@@ -136,26 +136,3 @@ def parser():
         return walker.params
 
     return _parse
-
-
-def main():
-    #grammar = open('rhbzql.ebnf').read()
-    #parser = tatsu.compile(grammar, asmodel=True)
-
-    example = ('component == "test" AND '
-               'not (whiteboard != 8.3 | status in ["NEW", "ON_DEV", 3]) '
-               '& not x == 4 and '
-               'bug_id listofbugs [1, 2]')
-    #model = parser.parse(example)
-                       #semantics=BZQLSemantics())
-
-    #pprint(model, indent=4)
-    #walker = BZQLWalker()
-    #walker.walk(model)
-
-    params = parser()(example)
-    import pdb; pdb.set_trace()
-    print(1)
-
-if __name__ == '__main__':
-    main()
