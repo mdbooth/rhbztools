@@ -115,7 +115,7 @@ class Session:
         if fields is not None:
             params['include_fields'] = ','.join(fields + ['id'])
 
-        response = self._get(['bug'], params)['bugs']
+        response = self._get(['bug'], params)
         return self._buglist(response)
 
     def query(self, query, fields=None):
