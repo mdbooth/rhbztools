@@ -26,9 +26,18 @@ from rhbztools import bzql
 LOG = logging.getLogger(__name__)
 
 
+class CommaListArg(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        listarg = getattr(namespace, self.dest)
+        if listarg is None:
+            listarg = []
+            setattr(namespace, self.dest, listarg)
+
+        listarg.extend(values.split(','))
+
 def main():
     parser = argparse.ArgumentParser(description='Query bugzilla')
-    parser.add_argument('-f', '--field', action='append', type=str)
+    parser.add_argument('-f', '--field', action=CommaListArg, type=str)
     parser.add_argument('-d', '--debug', action='count', default=0)
     parser.add_argument('-q', '--queryfile')
     parser.add_argument('query', type=str)
