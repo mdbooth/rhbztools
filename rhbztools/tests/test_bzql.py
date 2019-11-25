@@ -125,12 +125,29 @@ class TestBZQL(testtools.TestCase):
     )
     @ddt.unpack
     def test_aliasedops(self, real_op, alt_op, val, rendered_val):
-        query = 'status {op} {value}'
-        expected = {'f0': 'status', 'o0': real_op, 'v0': rendered_val}
+        query = 'bug_status {op} {value}'
+        expected = {'f0': 'bug_status', 'o0': real_op, 'v0': rendered_val}
 
         for op in (real_op, alt_op):
             params = self.parser(query.format(op=op, value=val))
             self.assertEqual(expected, params)
+
+    @ddt.data(
+        ('bug_status', 'status'),
+        ('cf_devel_whiteboard', 'devel_whiteboard'),
+        ('cf_fixed_in', 'fixed_in'),
+        ('cf_internal_whiteboard', 'internal_whiteboard'),
+        ('cf_pm_score', 'pm_score'),
+        ('cf_qa_whiteboard', 'qa_whiteboard'),
+        ('cf_zstream_target_release', 'zstream_target_release'),
+    )
+    @ddt.unpack
+    def test_aliasedqueryfields(self, real_field, alt_field):
+        query = '{field} = "foo"'.format(field=alt_field)
+        expected = {'f0': real_field, 'o0': 'equals', 'v0': 'foo'}
+
+        params = self.parser(query)
+        self.assertEqual(expected, params)
 
     @ddt.data(
         'equals',
@@ -146,22 +163,22 @@ class TestBZQL(testtools.TestCase):
     )
     def test_scalarops(self, op):
         query = [
-            'status {op} "foo"',
-            'status {op} 1',
-            'status {op} 23.45',
+            'bug_status {op} "foo"',
+            'bug_status {op} 1',
+            'bug_status {op} 23.45',
         ]
 
         expected = [
-            {'f0': 'status', 'o0': op, 'v0': "foo"},
-            {'f0': 'status', 'o0': op, 'v0': 1},
-            {'f0': 'status', 'o0': op, 'v0': 23.45},
+            {'f0': 'bug_status', 'o0': op, 'v0': "foo"},
+            {'f0': 'bug_status', 'o0': op, 'v0': 1},
+            {'f0': 'bug_status', 'o0': op, 'v0': 23.45},
         ]
 
         for (q, e) in zip(query, expected):
             params = self.parser(q.format(op=op))
             self.assertEqual(e, params)
 
-        failquery = 'status {op} ["foo"]'.format(op=op)
+        failquery = 'bug_status {op} ["foo"]'.format(op=op)
         self.assertRaises(tatsu.exceptions.ParseError, self.parser, failquery)
 
     @ddt.data(
@@ -210,9 +227,9 @@ class TestBZQL(testtools.TestCase):
     )
     def test_stringops(self, op):
         successval = '"foo"'
-        query = 'status {op} {value}'
+        query = 'bug_status {op} {value}'
 
-        expected = {'f0': 'status', 'o0': op, 'v0': "foo"}
+        expected = {'f0': 'bug_status', 'o0': op, 'v0': "foo"}
 
         params = self.parser(query.format(op=op, value=successval))
         self.assertEqual(expected, params)
@@ -227,9 +244,9 @@ class TestBZQL(testtools.TestCase):
     )
     def test_unaryops(self, op):
         successval = ''
-        query = 'status {op} {value}'
+        query = 'bug_status {op} {value}'
 
-        expected = {'f0': 'status', 'o0': op}
+        expected = {'f0': 'bug_status', 'o0': op}
 
         params = self.parser(query.format(op=op, value=successval))
         self.assertEqual(expected, params)

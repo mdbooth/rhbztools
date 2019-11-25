@@ -185,131 +185,131 @@ Fields
 
 Available field names are:
 
-======================================  =====================================
-percentage_complete                     %Complete
-alias                                   Alias
-component_a                             Approved Component List
-cf_approved_release                     Approved Release
-assigned_to                             Assignee
-assigned_to_realname                    Assignee Real Name
-attachments.submitter                   Attachment creator
-attach_data.thedata                     Attachment data
-attachments.description                 Attachment description
-attachments.filename                    Attachment filename
-attachments.isobsolete                  Attachment is obsolete
-attachments.ispatch                     Attachment is patch
-attachments.isprivate                   Attachment is private
-attachments.mimetype                    Attachment mime type
-blocked                                 Blocks
-bug_id                                  Bug ID
-cf_build_id                             Build ID
-component_c                             Capacity Component List
-cf_category                             Category
-cc                                      CC
-cclist_accessible                       CC list accessible
-delta_ts                                Changed
-classification                          Classification
-cf_clone_of                             Clone Of
-cf_epm_cdp                              Close Duplicate Candidate
-cf_cloudforms_team                      Cloudforms Team
-longdesc                                Comment
-longdescs.isprivate                     Comment is private
-comment_tag                             Comment Tag
-commenter                               Commenter
-cf_compliance_control_group             Compliance Control Group
-cf_compliance_level                     Compliance Level
-component                               Component
-content                                 Content
-creation_ts                             Creation date
-cf_crm                                  CRM
-cf_deadline                             Current Deadline
-cf_deadline_type                        Current Deadline Type
-cf_cust_facing                          Customer Escalation
-days_elapsed                            Days since bug changed
-deadline                                Deadline
-dependent_products                      Dependent Products
-dependson                               Depends On
-cf_conditional_nak                      Devel Conditional NAK
-cf_devel_whiteboard                     Devel Whiteboard
-cf_release_notes                        Doc Text
-cf_doc_type                             Doc Type
-docs_contact                            Docs Contact
-docs_contact_realname                   Docs Contact Real Name
-cf_docs_score                           Docs Score
-cf_documentation_action                 Documentation
-cf_environment                          Environment
-cf_epm_pri                              EPM Priority
-everconfirmed                           Ever confirmed
-extra_components                        Extra Components
-extra_versions                          Extra Versions
-cf_fixed_in                             Fixed In Version
-requestees.login_name                   Flag Requestee
-setters.login_name                      Flag Setter
-flagtypes.name                          Flags
-bug_group                               Group
-rep_platform                            Hardware
-cf_srtnotes                             Internal SRT notes
-cf_internal_target_milestone            Internal Target Milestone
-cf_internal_target_release              Internal Target Release
-cf_internal_whiteboard                  Internal Whiteboard
-keywords                                Keywords
-cf_last_closed                          Last Closed
-last_visit_ts                           Last Visit
-ext_bz_bug_map.ext_bz_bug_id            Link ID
-ext_bz_bug_map.ext_status               Link Status
-external_bugzilla.description           Link System Description
-external_bugzilla.url                   Link System URL
-cf_mount_type                           Mount Type
-longdescs.count                         Number of Comments
-cf_epm_phd                              Onsite Hardware Date
-estimated_time                          Orig. Est.
-op_sys                                  OS
-cf_ovirt_team                           oVirt Team
-cf_partner                              Partner
-cf_epm_prf_state                        Partner Requirement State
-tag                                     Personal Tags
-cf_pgm_internal                         PgM Internal
-cf_pm_score                             PM Score
-remaining_time                          Points Left
-work_time                               Points Worked
-agile_pool.name                         Pool
-bug_agile_pool.pool_id                  Pool ID
-bug_agile_pool.pool_order               Pool Order
-priority                                Priority
-product                                 Product
-cf_epm_ptl                              Public Target Launch Date
-qa_contact                              QA Contact
-qa_contact_realname                     QA Contact Real Name
-cf_qa_whiteboard                        QA Whiteboard
-cf_qe_conditional_nak                   QE Conditional NAK
-cf_regression_status                    Regression
-reporter                                Reporter
-reporter_accessible                     Reporter accessible
-reporter_realname                       Reporter Real Name
-resolution                              Resolution
-cf_atomic                               RHEL 7.3 requirements from Atomic Host
-rh_rule                                 Rule Engine Rule
-see_also                                See Also
-bug_severity                            Severity
-bug_status                              Status
-cf_story_points                         Story Points
-rh_sub_components                       Sub Component
-short_desc                              Summary
-target_milestone                        Target Milestone
-target_release                          Target Release
-cf_target_upstream_version              Target Upstream Version
-owner_idle_time                         Time Since Assignee Touched
-cf_type                                 Type
-cf_epm_put                              Upstream Kernel Target
-bug_file_loc                            URL
-cf_verified                             Verified
-cf_verified_branch                      Verified Versions
-version                                 Version
-view                                    view
-votes                                   Votes
-status_whiteboard                       Whiteboard
-cf_zstream_target_release               ZStream Target Release
-======================================  =====================================
+======================================================= =====================================
+percentage_complete                                     %Complete
+alias                                                   Alias
+component_a                                             Approved Component List
+cf_approved_release                                     Approved Release
+assigned_to                                             Assignee
+assigned_to_realname                                    Assignee Real Name
+attachments.submitter                                   Attachment creator
+attach_data.thedata                                     Attachment data
+attachments.description                                 Attachment description
+attachments.filename                                    Attachment filename
+attachments.isobsolete                                  Attachment is obsolete
+attachments.ispatch                                     Attachment is patch
+attachments.isprivate                                   Attachment is private
+attachments.mimetype                                    Attachment mime type
+blocked                                                 Blocks
+bug_id                                                  Bug ID
+cf_build_id                                             Build ID
+component_c                                             Capacity Component List
+cf_category                                             Category
+cc                                                      CC
+cclist_accessible                                       CC list accessible
+delta_ts                                                Changed
+classification                                          Classification
+cf_clone_of                                             Clone Of
+cf_epm_cdp                                              Close Duplicate Candidate
+cf_cloudforms_team                                      Cloudforms Team
+longdesc                                                Comment
+longdescs.isprivate                                     Comment is private
+comment_tag                                             Comment Tag
+commenter                                               Commenter
+cf_compliance_control_group                             Compliance Control Group
+cf_compliance_level                                     Compliance Level
+component                                               Component
+content                                                 Content
+creation_ts                                             Creation date
+cf_crm                                                  CRM
+cf_deadline                                             Current Deadline
+cf_deadline_type                                        Current Deadline Type
+cf_cust_facing                                          Customer Escalation
+days_elapsed                                            Days since bug changed
+deadline                                                Deadline
+dependent_products                                      Dependent Products
+dependson                                               Depends On
+cf_conditional_nak                                      Devel Conditional NAK
+cf_devel_whiteboard, or devel_whiteboard                Devel Whiteboard
+cf_release_notes                                        Doc Text
+cf_doc_type                                             Doc Type
+docs_contact                                            Docs Contact
+docs_contact_realname                                   Docs Contact Real Name
+cf_docs_score                                           Docs Score
+cf_documentation_action                                 Documentation
+cf_environment                                          Environment
+cf_epm_pri                                              EPM Priority
+everconfirmed                                           Ever confirmed
+extra_components                                        Extra Components
+extra_versions                                          Extra Versions
+cf_fixed_in, or fixed_in                                Fixed In Version
+requestees.login_name                                   Flag Requestee
+setters.login_name                                      Flag Setter
+flagtypes.name                                          Flags
+bug_group                                               Group
+rep_platform                                            Hardware
+cf_srtnotes                                             Internal SRT notes
+cf_internal_target_milestone                            Internal Target Milestone
+cf_internal_target_release                              Internal Target Release
+cf_internal_whiteboard, or internal_whiteboard          Internal Whiteboard
+keywords                                                Keywords
+cf_last_closed                                          Last Closed
+last_visit_ts                                           Last Visit
+ext_bz_bug_map.ext_bz_bug_id                            Link ID
+ext_bz_bug_map.ext_status                               Link Status
+external_bugzilla.description                           Link System Description
+external_bugzilla.url                                   Link System URL
+cf_mount_type                                           Mount Type
+longdescs.count                                         Number of Comments
+cf_epm_phd                                              Onsite Hardware Date
+estimated_time                                          Orig. Est.
+op_sys                                                  OS
+cf_ovirt_team                                           oVirt Team
+cf_partner                                              Partner
+cf_epm_prf_state                                        Partner Requirement State
+tag                                                     Personal Tags
+cf_pgm_internal                                         PgM Internal
+cf_pm_score, or pm_score                                PM Score
+remaining_time                                          Points Left
+work_time                                               Points Worked
+agile_pool.name                                         Pool
+bug_agile_pool.pool_id                                  Pool ID
+bug_agile_pool.pool_order                               Pool Order
+priority                                                Priority
+product                                                 Product
+cf_epm_ptl                                              Public Target Launch Date
+qa_contact                                              QA Contact
+qa_contact_realname                                     QA Contact Real Name
+cf_qa_whiteboard, or qa_whiteboard                      QA Whiteboard
+cf_qe_conditional_nak                                   QE Conditional NAK
+cf_regression_status                                    Regression
+reporter                                                Reporter
+reporter_accessible                                     Reporter accessible
+reporter_realname                                       Reporter Real Name
+resolution                                              Resolution
+cf_atomic                                               RHEL 7.3 requirements from Atomic Host
+rh_rule                                                 Rule Engine Rule
+see_also                                                See Also
+bug_severity                                            Severity
+bug_status, or status                                   Status
+cf_story_points                                         Story Points
+rh_sub_components                                       Sub Component
+short_desc                                              Summary
+target_milestone                                        Target Milestone
+target_release                                          Target Release
+cf_target_upstream_version                              Target Upstream Version
+owner_idle_time                                         Time Since Assignee Touched
+cf_type                                                 Type
+cf_epm_put                                              Upstream Kernel Target
+bug_file_loc                                            URL
+cf_verified                                             Verified
+cf_verified_branch                                      Verified Versions
+version                                                 Version
+view                                                    view
+votes                                                   Votes
+status_whiteboard                                       Whiteboard
+cf_zstream_target_release, or zstream_target_release    ZStream Target Release
+======================================================= =====================================
 
 Query operations
 -------------------------

@@ -42,6 +42,16 @@ class BZQLWalker(NodeWalker):
             'contains': 'casesubstring',
         }
 
+        self.aliased_query_fields = {
+            'status': 'bug_status',
+            'devel_whiteboard': 'cf_devel_whiteboard',
+            'fixed_in': 'cf_fixed_in',
+            'internal_whiteboard': 'cf_internal_whiteboard',
+            'pm_score': 'cf_pm_score',
+            'qa_whiteboard': 'cf_qa_whiteboard',
+            'zstream_target_release': 'cf_zstream_target_release',
+        }
+
     def _set(self, key, value, n=None):
         if n is None:
             n = self.n
@@ -100,7 +110,11 @@ class BZQLWalker(NodeWalker):
         if op is None:
             op = node.op
 
-        self._set('f', node.field)
+        field = self.aliased_query_fields.get(node.field)
+        if field is None:
+            field = node.field
+
+        self._set('f', field)
         self._set('o', op)
         if negate:
             self._set('n', 1)
