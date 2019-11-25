@@ -91,7 +91,7 @@ complex queries like:
   cf_internal_whiteboard substring "DFG:Compute" and
   bug_status in ["NEW", "ASSIGNED"] and not (
     keywords substring "Documentation" or
-    component == "documentation"
+    component = "documentation"
   ) and flagtypes.name substring "rhos-17.0"
 
 It returns results as a JSON list. By default it returns add fields, but
@@ -99,7 +99,83 @@ returned fields can be specified explicitly with the -f flag. It is invoked as:
 
 ::
 
-  bzquery [-h] [-f FIELD] [-d] query
+  bzquery [-h] [-f FIELD] [-d] [-q QUERYFILE] query
+
+Syntax
+------
+
+A basic expression takes the form:
+
+::
+
+  field operation value
+
+Different operations require different value types. Value types are:
+
+* Integers: 0
+* Floating point: 0.1
+* Strings: "this is a string"
+* Lists: [0, "foo"]
+
+Expressions can be joined with ``and`` (alternatively ``&``), and ``or``
+(alternatively ``|``). ``and`` has higher precedence than ``or``. Expressions
+can also be grouped in parentheses, which has the highest precedence. e.g.:
+
+::
+
+  component = "openstack-nova" & (
+      bug_status = "NEW" or
+      assigned_to = "mbooth@redhat.com")
+
+Expressions and parenthesis groups can be negated by prefixing them with
+``not`` (alternatively ``!``). e.g.:
+
+::
+
+  component = "openstack-nova" & not (
+      bug_status = "NEW" or
+      ! assigned_to = "mbooth@redhat.com")
+
+Query file
+----------
+
+Queries can be read either by specifying them on the command line, or from a
+query file. If a query file is used, bzquery will attempt to read queries from
+a YAML formatted file, e.g.:
+
+::
+
+  osp17: >
+      classification = "Red Hat" &
+      product = "Red Hat OpenStack" &
+      cf_internal_whiteboard casesubstring "DFG:Compute" &
+      not (
+        keywords casesubstring "Documentation" |
+        component = "documentation"
+      ) &
+      flagtypes.name substring "rhos-17.0"
+  
+  osp16: >
+      classification = "Red Hat" &
+      product = "Red Hat OpenStack" &
+      cf_internal_whiteboard casesubstring "DFG:Compute" &
+      not (
+        keywords casesubstring "Documentation" |
+        component = "documentation"
+      ) &
+      flagtypes.name substring "rhos-16.0"
+
+When specifing a query file, the `query` parameter is expected to be the name
+of one of the queries in the query file, e.g.:
+
+::
+
+  bzquery -f queries.yaml -f summary osp17
+
+If the given query name is not found it will instead be interpreted as a full query.
+
+Fields
+---------------
 
 Available field names are:
 
@@ -229,10 +305,13 @@ status_whiteboard                       Whiteboard
 cf_zstream_target_release               ZStream Target Release
 ======================================  =====================================
 
+Query operations
+-------------------------
+
 Available operations are:
 
 ======================================  =====================================
-equals, or ==                           is equal to
+equals, or =                            is equal to
 notequals, or !=                        is not equal to
 anyexact, in                            is equal to any of the strings
 substring                               contains the string
@@ -261,35 +340,3 @@ isempty                                 is empty
 isnotempty                              is not empty
 listofbugs                              In the list of bugs
 ======================================  =====================================
-
-A basic expression takes the form:
-
-::
-
-  field operation value
-
-Different operations require different value types. Value types are:
-
-* Integers: 0
-* Floating point: 0.1
-* Strings: "this is a string"
-* Lists: [0, "foo"]
-
-Expressions can be joined with ``and`` (alternatively ``&``), and ``or``
-(alternatively ``|``). ``and`` has higher precedence than ``or``. Expressions
-can also be grouped in parentheses, which has the highest precedence. e.g.:
-
-::
-
-  component == "openstack-nova" & (
-      bug_status == "NEW" or
-      assigned_to == "mbooth@redhat.com")
-
-Expressions and parenthesis groups can be negated by prefixing them with
-``not`` (alternatively ``!``). e.g.:
-
-::
-
-  component == "openstack-nova" & not (
-      bug_status == "NEW" or
-      ! assigned_to == "mbooth@redhat.com")
