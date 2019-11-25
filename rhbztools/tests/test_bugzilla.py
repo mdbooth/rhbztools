@@ -21,6 +21,7 @@ import json
 import requests_mock
 from urllib.parse import urlencode
 import testtools
+import types
 from unittest import mock
 
 from rhbztools import bugzilla
@@ -136,7 +137,7 @@ class TestSession(testtools.TestCase):
         query = dict(id='12345', **self.fake_creds)
         expected_url = ('https://bugzilla.redhat.com/rest/bug?' +
                         urlencode(query))
-        self.req.get(expected_url, text=json.dumps({'bugs': 'fake_response'}))
+        self.req.get(expected_url, text=json.dumps({'bugs': ['fake_bug']}))
 
         session = bugzilla.Session()
         r = session.get_bug(12345)
@@ -144,13 +145,14 @@ class TestSession(testtools.TestCase):
         req = self._find_req_for_path('/rest/bug')
         self.assertIsNotNone(req)
         self._assert_query_match(query, req.qs)
-        self.assertEqual(r, 'fake_response')
+        self.assertIsInstance(r, types.GeneratorType)
+        self.assertListEqual(['fake_bug'], list(r))
 
     def test_bugs_multiple(self):
         query = dict(id='1,2,3,4,5', **self.fake_creds)
         expected_url = ('https://bugzilla.redhat.com/rest/bug?' +
                         urlencode(query))
-        self.req.get(expected_url, text=json.dumps({'bugs': 'fake_response'}))
+        self.req.get(expected_url, text=json.dumps({'bugs': ['fake_bug']}))
 
         session = bugzilla.Session()
         r = session.get_bugs([1, 2, 3, 4, 5])
@@ -158,7 +160,8 @@ class TestSession(testtools.TestCase):
         req = self._find_req_for_path('/rest/bug')
         self.assertIsNotNone(req)
         self._assert_query_match(query, req.qs)
-        self.assertEqual(r, 'fake_response')
+        self.assertIsInstance(r, types.GeneratorType)
+        self.assertListEqual(['fake_bug'], list(r))
 
     def test_bugs_include_fields(self):
         query = dict(id='1,2,3,4,5',
@@ -166,7 +169,7 @@ class TestSession(testtools.TestCase):
                      **self.fake_creds)
         expected_url = ('https://bugzilla.redhat.com/rest/bug?' +
                         urlencode(query))
-        self.req.get(expected_url, text=json.dumps({'bugs': 'fake_response'}))
+        self.req.get(expected_url, text=json.dumps({'bugs': ['fake_bug']}))
 
         session = bugzilla.Session()
         r = session.get_bugs([1, 2, 3, 4, 5], fields=['cf_internal_whiteboard'])
@@ -174,7 +177,8 @@ class TestSession(testtools.TestCase):
         bug_req = next((req for req in self.req.request_history
                         if req.path == '/rest/bug'))
         self._assert_query_match(query, bug_req.qs)
-        self.assertEqual(r, 'fake_response')
+        self.assertIsInstance(r, types.GeneratorType)
+        self.assertListEqual(['fake_bug'], list(r))
 
     # NOTE(mdbooth): This tests the multiple bugs version of PUT, which RHBZ
     # doesn't seem to support

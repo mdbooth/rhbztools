@@ -103,11 +103,20 @@ class Session:
         return self.get_bugs([bzid], fields=fields)
 
     @staticmethod
-    def _buglist(response):
+    def _buglist(response, fields):
         if response.get('error'):
             raise BugzillaError(response.get('message'))
 
-        return response.get('bugs')
+        if fields is not None and 'bzurl' in fields:
+            def add_url(bug):
+                bug['bzurl'] = 'https://bugzilla.redhat.com/{bzid}'.format(
+                                bzid=bug['id'])
+                return bug
+            transform = add_url
+        else:
+            transform = lambda x: x
+
+        return (transform(bug) for bug in response.get('bugs'))
 
     @staticmethod
     def _include_fields(fields):
@@ -125,7 +134,7 @@ class Session:
             params['include_fields'] = include_fields
 
         response = self._get(['bug'], params)
-        return self._buglist(response)
+        return self._buglist(response, fields)
 
     def query(self, query, fields=None):
         parser = bzql.parser()

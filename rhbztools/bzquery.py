@@ -65,4 +65,4 @@ def main():
         print('Error fetching bugs: {msg}'.format(msg=str(ex)))
         return 1
 
-    print(json.dumps(response))
+    print(json.dumps(list(response)))

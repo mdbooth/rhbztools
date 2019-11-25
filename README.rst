@@ -101,6 +101,12 @@ returned fields can be specified explicitly with the -f flag. It is invoked as:
 
   bzquery [-h] [-f FIELD] [-d] [-q QUERYFILE] query
 
+By default, the output JSON will contain all fields of the returned bugs.
+Specifying one or more fields with the `-f` option will restrict that output to
+only those fields. The `id` field will always be included, whether specified or
+not. In additional to all available bugzilla fields, a `bzurl` field may be
+specified which will include the bugzilla URL of each bug.
+
 Syntax
 ------
 
