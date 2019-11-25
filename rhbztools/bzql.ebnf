@@ -187,8 +187,13 @@ greaterthaneq
     | '>='
     ;
 
+casesubstring
+    =
+    | /(?i)casesubstring/
+    | 'contains'
+    ;
+
 substring = /(?i)substring/ ;
-casesubstring = /(?i)casesubstring/ ;
 notsubstring = /(?i)notsubstring/ ;
 changedfrom = /(?i)changedfrom/ ;
 changedto = /(?i)changedto/ ;

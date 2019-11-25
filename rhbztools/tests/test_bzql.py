@@ -121,6 +121,7 @@ class TestBZQL(testtools.TestCase):
         ('lessthaneq', '<=', '0', 0),
         ('greaterthan', '>', '0', 0),
         ('greaterthaneq', '>=', '0', 0),
+        ('casesubstring', 'contains', '"foo"', 'foo'),
     )
     @ddt.unpack
     def test_aliasedops(self, real_op, alt_op, val, rendered_val):

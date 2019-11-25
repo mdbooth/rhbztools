@@ -39,6 +39,7 @@ class BZQLWalker(NodeWalker):
             '<=': 'lessthaneq',
             '>': 'greaterthan',
             '>=': 'greaterthaneq',
+            'contains': 'casesubstring',
         }
 
     def _set(self, key, value, n=None):

@@ -148,9 +148,9 @@ a YAML formatted file, e.g.:
   osp17: >
       classification = "Red Hat" &
       product = "Red Hat OpenStack" &
-      cf_internal_whiteboard casesubstring "DFG:Compute" &
+      cf_internal_whiteboard contains "DFG:Compute" &
       not (
-        keywords casesubstring "Documentation" |
+        keywords contains "Documentation" |
         component = "documentation"
       ) &
       flagtypes.name substring "rhos-17.0"
@@ -158,9 +158,9 @@ a YAML formatted file, e.g.:
   osp16: >
       classification = "Red Hat" &
       product = "Red Hat OpenStack" &
-      cf_internal_whiteboard casesubstring "DFG:Compute" &
+      cf_internal_whiteboard contains "DFG:Compute" &
       not (
-        keywords casesubstring "Documentation" |
+        keywords contains "Documentation" |
         component = "documentation"
       ) &
       flagtypes.name substring "rhos-16.0"
@@ -315,7 +315,7 @@ equals, or =                            is equal to
 notequals, or !=                        is not equal to
 anyexact, in                            is equal to any of the strings
 substring                               contains the string
-casesubstring                           contains the string (exact case)
+casesubstring, or contains              contains the string (exact case)
 notsubstring                            does not contain the string
 anywordssubstr                          contains any of the strings
 allwordssubstr                          contains all of the strings
