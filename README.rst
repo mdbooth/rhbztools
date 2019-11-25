@@ -92,7 +92,7 @@ complex queries like:
   bug_status in ["NEW", "ASSIGNED"] and not (
     keywords substring "Documentation" or
     component = "documentation"
-  ) and flagtypes.name substring "rhos-17.0"
+  ) and flags contains "rhos-17.0+"
 
 It returns results as a JSON list. By default it returns add fields, but
 returned fields can be specified explicitly with the -f flag. It is invoked as:
@@ -159,7 +159,7 @@ a YAML formatted file, e.g.:
         keywords contains "Documentation" |
         component = "documentation"
       ) &
-      flagtypes.name substring "rhos-17.0"
+      flags contains "rhos-17.0+"
   
   osp16: >
       classification = "Red Hat" &
@@ -169,7 +169,7 @@ a YAML formatted file, e.g.:
         keywords contains "Documentation" |
         component = "documentation"
       ) &
-      flagtypes.name substring "rhos-16.0"
+      flags contains "rhos-16.0+"
 
 When specifing a query file, the `query` parameter is expected to be the name
 of one of the queries in the query file, e.g.:
@@ -245,7 +245,7 @@ extra_versions                                          Extra Versions
 cf_fixed_in, or fixed_in                                Fixed In Version
 requestees.login_name                                   Flag Requestee
 setters.login_name                                      Flag Setter
-flagtypes.name                                          Flags
+flagtypes.name, flags                                   Flags
 bug_group                                               Group
 rep_platform                                            Hardware
 cf_srtnotes                                             Internal SRT notes

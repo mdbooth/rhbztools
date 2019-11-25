@@ -140,6 +140,7 @@ class TestBZQL(testtools.TestCase):
         ('cf_pm_score', 'pm_score'),
         ('cf_qa_whiteboard', 'qa_whiteboard'),
         ('cf_zstream_target_release', 'zstream_target_release'),
+        ('flagtypes.name', 'flags'),
     )
     @ddt.unpack
     def test_aliasedqueryfields(self, real_field, alt_field):

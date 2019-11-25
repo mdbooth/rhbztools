@@ -43,12 +43,13 @@ class BZQLWalker(NodeWalker):
         }
 
         self.aliased_query_fields = {
-            'status': 'bug_status',
             'devel_whiteboard': 'cf_devel_whiteboard',
             'fixed_in': 'cf_fixed_in',
+            'flags': 'flagtypes.name',
             'internal_whiteboard': 'cf_internal_whiteboard',
             'pm_score': 'cf_pm_score',
             'qa_whiteboard': 'cf_qa_whiteboard',
+            'status': 'bug_status',
             'zstream_target_release': 'cf_zstream_target_release',
         }
 
