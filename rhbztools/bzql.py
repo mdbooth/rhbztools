@@ -29,8 +29,8 @@ class BZQLWalker(NodeWalker):
         self.n = 0
         self.params = {}
 
-        self.special_ops = {
-            '==': 'equals',
+        self.aliased_ops = {
+            '=': 'equals',
             '!=': 'notequals',
             'in': 'anyexact',
             '~': 'regexp',
@@ -95,7 +95,7 @@ class BZQLWalker(NodeWalker):
             self.walk(node.ast)
 
     def walk_OpExpression(self, node, negate=False):
-        op = self.special_ops.get(node.op)
+        op = self.aliased_ops.get(node.op)
         if op is None:
             op = node.op
 

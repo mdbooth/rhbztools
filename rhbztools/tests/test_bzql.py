@@ -33,52 +33,52 @@ class TestBZQL(testtools.TestCase):
         super(TestBZQL, self).setUp()
 
     @ddt.data(
-        ('classification == "Red Hat"',
+        ('classification = "Red Hat"',
          {'f0': 'classification', 'o0': 'equals', 'v0': 'Red Hat'}),
-        ('classification == "Red Hat" and product == "Red Hat OpenStack"',
+        ('classification = "Red Hat" and product = "Red Hat OpenStack"',
          {'f0': 'classification', 'o0': 'equals', 'v0': 'Red Hat',
           'f1': 'product', 'o1': 'equals', 'v1': 'Red Hat OpenStack'}),
-        ('classification == "Red Hat" and product == "Red Hat OpenStack" and '
-            'component == "openstack-nova"',
+        ('classification = "Red Hat" and product = "Red Hat OpenStack" and '
+            'component = "openstack-nova"',
          {'f0': 'classification', 'o0': 'equals', 'v0': 'Red Hat',
           'f1': 'product', 'o1': 'equals', 'v1': 'Red Hat OpenStack',
           'f2': 'component', 'o2': 'equals', 'v2': 'openstack-nova'}),
-        ('classification == "Red Hat" or product == "Red Hat OpenStack"',
+        ('classification = "Red Hat" or product = "Red Hat OpenStack"',
          {'j_top': 'OR',
           'f0': 'classification', 'o0': 'equals', 'v0': 'Red Hat',
           'f1': 'product', 'o1': 'equals', 'v1': 'Red Hat OpenStack'}),
-        ('classification == "Red Hat" or product == "Red Hat OpenStack" or '
-            'component == "openstack-nova"',
+        ('classification = "Red Hat" or product = "Red Hat OpenStack" or '
+            'component = "openstack-nova"',
          {'j_top': 'OR',
           'f0': 'classification', 'o0': 'equals', 'v0': 'Red Hat',
           'f1': 'product', 'o1': 'equals', 'v1': 'Red Hat OpenStack',
           'f2': 'component', 'o2': 'equals', 'v2': 'openstack-nova'}),
-        ('classification == "Red Hat" and product == "Red Hat OpenStack" or '
-            'component == "openstack-nova"',
+        ('classification = "Red Hat" and product = "Red Hat OpenStack" or '
+            'component = "openstack-nova"',
          {'j_top': 'OR',
           'f0': 'OP',
           'f1': 'classification', 'o1': 'equals', 'v1': 'Red Hat',
           'f2': 'product', 'o2': 'equals', 'v2': 'Red Hat OpenStack',
           'f3': 'CP',
           'f4': 'component', 'o4': 'equals', 'v4': 'openstack-nova'}),
-        ('classification == "Red Hat" or product == "Red Hat OpenStack" and '
-            'component == "openstack-nova"',
+        ('classification = "Red Hat" or product = "Red Hat OpenStack" and '
+            'component = "openstack-nova"',
          {'j_top': 'OR',
           'f0': 'classification', 'o0': 'equals', 'v0': 'Red Hat',
           'f1': 'OP',
           'f2': 'product', 'o2': 'equals', 'v2': 'Red Hat OpenStack',
           'f3': 'component', 'o3': 'equals', 'v3': 'openstack-nova',
           'f4': 'CP'}),
-        ('classification == "Red Hat" or (product == "Red Hat OpenStack" and '
-            'component == "openstack-nova")',
+        ('classification = "Red Hat" or (product = "Red Hat OpenStack" and '
+            'component = "openstack-nova")',
          {'j_top': 'OR',
           'f0': 'classification', 'o0': 'equals', 'v0': 'Red Hat',
           'f1': 'OP',
           'f2': 'product', 'o2': 'equals', 'v2': 'Red Hat OpenStack',
           'f3': 'component', 'o3': 'equals', 'v3': 'openstack-nova',
           'f4': 'CP'}),
-        ('(classification == "Red Hat" or product == "Red Hat OpenStack") and '
-            'component == "openstack-nova"',
+        ('(classification = "Red Hat" or product = "Red Hat OpenStack") and '
+            'component = "openstack-nova"',
          {'f0': 'OP', 'j0': 'OR',
           'f1': 'classification', 'o1': 'equals', 'v1': 'Red Hat',
           'f2': 'product', 'o2': 'equals', 'v2': 'Red Hat OpenStack',
@@ -91,16 +91,16 @@ class TestBZQL(testtools.TestCase):
         self.assertEqual(expected, params)
 
     @ddt.data(
-        ('not classification == "Red Hat"',
+        ('not classification = "Red Hat"',
          {'n0': 1, 'f0': 'classification', 'o0': 'equals', 'v0': 'Red Hat'}),
-        ('not (classification == "Red Hat" and product == "Red Hat OpenStack")',
+        ('not (classification = "Red Hat" and product = "Red Hat OpenStack")',
          {'f0': 'OP', 'n0': 1,
           'f1': 'classification', 'o1': 'equals', 'v1': 'Red Hat',
           'f2': 'product', 'o2': 'equals', 'v2': 'Red Hat OpenStack',
           'f3': 'CP'}),
-        ('! classification == "Red Hat"',
+        ('! classification = "Red Hat"',
          {'n0': 1, 'f0': 'classification', 'o0': 'equals', 'v0': 'Red Hat'}),
-        ('! (classification == "Red Hat" and product == "Red Hat OpenStack")',
+        ('! (classification = "Red Hat" and product = "Red Hat OpenStack")',
          {'f0': 'OP', 'n0': 1,
           'f1': 'classification', 'o1': 'equals', 'v1': 'Red Hat',
           'f2': 'product', 'o2': 'equals', 'v2': 'Red Hat OpenStack',
@@ -112,7 +112,7 @@ class TestBZQL(testtools.TestCase):
         self.assertEqual(expected, params)
 
     @ddt.data(
-        ('equals', '==', '0', 0),
+        ('equals', '=', '0', 0),
         ('notequals', '!=', '0', 0),
         ('anyexact', 'in', '["foo"]', 'foo'),
         ('regexp', '~', '"foo"', 'foo'),
@@ -123,7 +123,7 @@ class TestBZQL(testtools.TestCase):
         ('greaterthaneq', '>=', '0', 0),
     )
     @ddt.unpack
-    def test_specialops(self, real_op, alt_op, val, rendered_val):
+    def test_aliasedops(self, real_op, alt_op, val, rendered_val):
         query = 'status {op} {value}'
         expected = {'f0': 'status', 'o0': real_op, 'v0': rendered_val}
 
